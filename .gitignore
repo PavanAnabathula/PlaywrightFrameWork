@@ -1,0 +1,33 @@
+# Node modules
+node_modules/
+
+# Playwright test output
+playwright-report/
+test-results/
+
+# Environment files
+.env
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories and files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Optional lock files
+.pnpm-debug.log
+
+# Coverage
+coverage/
