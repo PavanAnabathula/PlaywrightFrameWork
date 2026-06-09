@@ -26,9 +26,9 @@ pipeline {
       steps {
         script {
           if (isUnix()) {
-            sh 'npx playwright test --reporter=list --reporter=junit'
+            sh 'npx playwright test --reporter=list,allure-playwright --reporter=junit'
           } else {
-            bat 'npx playwright test --reporter=list --reporter=junit'
+            bat 'npx playwright test --reporter=list,allure-playwright --reporter=junit'
           }
         }
       }
@@ -36,8 +36,19 @@ pipeline {
   }
   post {
     always {
-      archiveArtifacts artifacts: 'playwright-report/**, test-results/**', allowEmptyArchive: true
+      // Archive Playwright HTML report, JUnit results, and Allure results/report
+      archiveArtifacts artifacts: 'playwright-report/**, test-results/**, allure-results/**, allure-report/**', allowEmptyArchive: true
       junit allowEmptyResults: true, testResults: 'test-results/*.xml'
+      // Generate Allure report when results exist
+      script {
+        if (fileExists('allure-results')) {
+          if (isUnix()) {
+            sh 'npx allure generate allure-results --clean -o allure-report'
+          } else {
+            bat 'npx allure generate allure-results --clean -o allure-report'
+          }
+        }
+      }
     }
   }
 }

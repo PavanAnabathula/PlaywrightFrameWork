@@ -222,6 +222,55 @@ test.describe('Sauce Demo - Page Object Model', () => {
     await expect(page.locator('.shopping_cart_badge')).toHaveText('1');
   });
 
+  test('cart page shows selected item after add to cart', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.login('standard_user', 'secret_sauce');
+
+    const inventoryPage = new InventoryPage(page);
+    await inventoryPage.addToCart('sauce-labs-backpack');
+    await inventoryPage.openCart();
+
+    const cartPage = new CartPage(page);
+    const productNames = await cartPage.getProductNames();
+    expect(productNames).toContain('Sauce Labs Backpack');
+    await expect(cartPage.cartItems).toHaveCount(1);
+  });
+
+  test('checkout summary displays order details after shipping info', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.login('standard_user', 'secret_sauce');
+
+    const inventoryPage = new InventoryPage(page);
+    await inventoryPage.addToCart('sauce-labs-backpack');
+    await inventoryPage.openCart();
+
+    const cartPage = new CartPage(page);
+    await cartPage.checkout();
+
+    const checkoutPage = new CheckoutPage(page);
+    await checkoutPage.enterShippingInformation('Test', 'User', '29135');
+    await checkoutPage.continueCheckout();
+
+    await expect(checkoutPage.summaryInfo).toBeVisible();
+    await expect(checkoutPage.finishButton).toBeVisible();
+  });
+
+  test('can logout from cart page and returns to login', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.login('standard_user', 'secret_sauce');
+
+    const inventoryPage = new InventoryPage(page);
+    await inventoryPage.addToCart('sauce-labs-backpack');
+    await inventoryPage.openCart();
+
+    await inventoryPage.logout();
+    await expect(page).toHaveURL(/saucedemo.com\/$/);
+    await expect(page.locator('[data-test="login-button"]')).toBeVisible();
+  });
+
   test('sorts products by price high to low and low to high', async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
