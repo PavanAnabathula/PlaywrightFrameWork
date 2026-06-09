@@ -47,6 +47,19 @@ Open the HTML report:
 npm run test:report
 ```
 
+Run tests with Allure reporting and generate the Allure HTML report:
+
+```bash
+# Run tests and produce Allure results
+npm run test:allure
+
+# Generate the Allure HTML report from results
+npm run allure:generate
+
+# Open the generated Allure report (local)
+npm run allure:open
+```
+
 ## Test coverage
 
 The suite validates Sauce Demo application flows with the following scenarios:
